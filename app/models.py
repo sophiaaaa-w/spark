@@ -74,7 +74,6 @@ class Video:
 
     # 流水线后续阶段填充
     relevance: int = 0
-    score: float = 0.0                     # 加权得分，见 funnel.score_videos
     pattern_id: int | None = None
     # 以下三个只在「深度模式」用（需要抓账号历史），MVP 不填
     baseline: int | None = field(default=None)

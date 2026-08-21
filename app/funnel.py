@@ -1,8 +1,7 @@
-"""漏斗：硬过滤 → relevance 打分 → 预筛账号 → 终排序。
+"""漏斗：硬过滤 → relevance 打分 → 终排序。
 
-实测漏斗（Color Wow，150 条）：
-    原始 150 → 剔图文帖 66 → 只留英文 59 → 时长 44 → 近30天 15 → 播放>10k 7
-产出率 4.7%。所有阈值在 config.py，不要在这里写死数字。
+典型产出率 1%-3%（爬 1,700 条留 47 条）。所有阈值在 config.py，
+不要在这里写死数字。
 """
 from __future__ import annotations
 
@@ -184,86 +183,27 @@ def filter_with_relaxation(videos: list[Video], brand: BrandRef,
     return best, best_stats
 
 
-# ---------------------------------------------------------------- 预筛 / 终排序
-
-def prescreen_accounts(videos: list[Video],
-                       limit: int = C.PRESCREEN_ACCOUNTS) -> list[str]:
-    """选出最值得花钱算真实基线的账号。
-
-    用 播放/粉丝数 单指标排序：这一步要猜「哪些账号可能出现基线异常」，
-    而 播放/粉丝 是真实基线倍数最接近的免费代理。互动率衡量的是内容黏性，
-    是另一件事，混进来只会模糊目标。
-
-    每个账号取其最好的一条作为代表参与排序，但不丢弃该账号的其他视频。
-    """
-    best_by_author: dict[str, Video] = {}
-    for v in videos:
-        cur = best_by_author.get(v.author.username)
-        if cur is None or v.plays_per_follower > cur.plays_per_follower:
-            best_by_author[v.author.username] = v
-    ranked = sorted(best_by_author.values(),
-                    key=lambda v: v.plays_per_follower, reverse=True)
-    return [v.author.username for v in ranked[:limit]]
-
-
-def _percentiles(values: list[float]) -> list[float]:
-    """把一组数转成 0-1 的百分位（同值取平均秩）。
-
-    必须先转百分位再加权：播放量 1万-650万、互动率 1.5%-15%、播放/粉丝 0.1-500，
-    量级差太远，直接加权会被播放量完全支配。
-    """
-    n = len(values)
-    if n <= 1:
-        return [1.0] * n
-    order = sorted(range(n), key=lambda i: values[i])
-    out = [0.0] * n
-    i = 0
-    while i < n:
-        j = i
-        while j + 1 < n and values[order[j + 1]] == values[order[i]]:
-            j += 1
-        rank = (i + j) / 2 / (n - 1)
-        for k in range(i, j + 1):
-            out[order[k]] = rank
-        i = j + 1
-    return out
-
-
-def score_videos(videos: list[Video]) -> list[Video]:
-    """给每条视频算加权得分，写进 v.score。
-
-    权重在 config：播放 0.7 / 互动率 0.2 / 播放粉丝比 0.1。
-    播放量占大头是刻意的 —— TikTok 的分发很严酷，大号内容不好照样没播放，
-    所以播放量本身就是「有没有人爱看」的有效信号。
-    """
-    if not videos:
-        return videos
-    p_plays = _percentiles([float(v.plays) for v in videos])
-    p_eng = _percentiles([v.engagement_rate for v in videos])
-    p_ppf = _percentiles([v.plays_per_follower for v in videos])
-    for i, v in enumerate(videos):
-        v.score = round(
-            C.SCORE_WEIGHT_PLAYS * p_plays[i]
-            + C.SCORE_WEIGHT_ENGAGEMENT * p_eng[i]
-            + C.SCORE_WEIGHT_PLAYS_PER_FOLLOWER * p_ppf[i],
-            4,
-        )
-    return videos
-
+# ---------------------------------------------------------------- 终排序
 
 def final_rank(videos: list[Video], *, top_n: int = C.TOP_N,
                per_account: int = C.MAX_VIDEOS_PER_ACCOUNT) -> list[Video]:
-    """按加权得分降序，每账号最多 N 条。
+    """按播放量降序，每账号最多 N 条。
 
-    限制每账号条数是为了避免 pattern 归纳偏向某一个达人的个人风格 ——
-    一个人贡献 8 条会让「共性」变成「他的习惯」。
+    曾经用「播放/互动率/播放粉丝比」三项百分位加权排序，换成了纯播放量降序：
+    加权排序在页面上看不出规律 —— 用户扫到 198k 排在 1.2M 上面只会以为是 bug，
+    而排序规则是解释不了的（总不能在页面上写一行公式）。
+    播放量降序则是自明的，位置本身就传达了信息。
+
+    代价是互动率不再影响顺序，所以卡片上给本组互动率前 15% 的那一档上色 ——
+    排序编码不了的维度，用颜色补。
+
+    限制每账号条数是为了避免整页被某一个高产达人占满。
     """
-    scored = score_videos(list(videos))
-    scored.sort(key=lambda v: v.score, reverse=True)
+    ordered = sorted(videos, key=lambda v: v.plays, reverse=True)
 
     used: dict[str, int] = {}
     out: list[Video] = []
-    for v in scored:
+    for v in ordered:
         n = used.get(v.author.username, 0)
         if n >= per_account:
             continue

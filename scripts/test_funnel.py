@@ -81,12 +81,12 @@ def main() -> None:
         print("\n  ⚠️  一条不剩。检查 BrandRef 是否填对，或阈值是否过严。")
         return
 
-    accounts = funnel.prescreen_accounts(kept)
-    print(f"\n预筛出 {len(accounts)} 个账号（按 播放/粉丝 排序）")
-    for u in accounts[:10]:
-        v = next(x for x in kept if x.author.username == u)
-        print(f"    @{u:<24} 粉丝 {v.author.followers:>9,}  "
-              f"播放 {v.plays:>9,}  比值 {v.plays_per_follower:>6.2f}")
+    top = funnel.final_rank(kept)
+    print(f"\n终排序后 {len(top)} 条（播放降序，每账号最多 "
+          f"{funnel.C.MAX_VIDEOS_PER_ACCOUNT} 条）")
+    plays = [v.plays for v in top]
+    print("  是否严格降序:", all(plays[i] >= plays[i + 1] for i in range(len(plays) - 1)))
+    print(f"  涉及账号 {len({v.author.username for v in top})} 个")
 
     print("\n存活样本明细（按播放降序，前 12 条）")
     print(f"  {'播放':>9} {'互动率':>7} {'时长':>5} {'字幕':>4} {'相关':>4}  账号")
