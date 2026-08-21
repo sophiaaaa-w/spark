@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,700,900&display=swap" rel="stylesheet">
+<style>:root{
+  /* ── brand ─────────────────────────────── */
+  --color-cyan:#00CFC8;
+  --color-cyan-dim:#00A8A3;
+  --color-cyan-wash:#E6FBFA;
+  --color-magenta:#FE2C55;
+  --color-magenta-hover:#E62149;
+  --color-magenta-wash:#FFEEF1;
+
+  /* ── surfaces ──────────────────────────── */
+  --color-bg:#FFFFFF;
+  --color-surface:#FFFFFF;
+  --color-surface-sunken:#F6F6F7;
+  --color-surface-hover:rgba(10,10,11,0.03);
+  --color-border:rgba(10,10,11,0.10);
+  --color-border-strong:rgba(10,10,11,0.22);
+  --color-scrim:rgba(10,10,11,0.62);
+
+  /* ── text ──────────────────────────────── */
+  --color-text:#0E0E10;
+  --color-text-secondary:#5C5C64;
+  --color-text-muted:#6B6B75;
+  --color-text-on-magenta:#FFFFFF;
+  --color-data:#0B7F7B;
+
+  /* ── focus / state ─────────────────────── */
+  --focus-ring:0 0 0 3px rgba(0,207,200,0.28);
+  --color-focus-border:var(--color-cyan);
+  --color-error:var(--color-magenta);
+
+  /* ── type families ─────────────────────── */
+  --font-display:"Satoshi","General Sans",system-ui,sans-serif;
+  --font-body:"Inter",system-ui,sans-serif;
+  --font-mono:"Geist Mono","JetBrains Mono",ui-monospace,monospace;
+
+  /* ── type scale ────────────────────────── */
+  --text-h1:52px;
+  --text-h2:32px;
+  --text-h3:24px;
+  --text-lg:18px;
+  --text-body:16px;
+  --text-sm:15px;
+  --text-xs:13px;
+  --text-micro:12px;
+  --text-nano:11px;
+
+  --leading-tight:1.05;
+  --leading-snug:1.3;
+  --leading-normal:1.55;
+
+  --tracking-tight:-0.025em;
+  --tracking-normal:0;
+  --tracking-wide:0.08em;
+  --tracking-wider:0.12em;
+
+  --weight-regular:400;
+  --weight-medium:500;
+  --weight-bold:700;
+  --weight-black:900;
+
+  /* ── spacing scale ─────────────────────── */
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:24px;
+  --space-6:32px;
+  --space-7:48px;
+  --space-8:64px;
+  --space-9:96px;
+
+  /* ── layout ────────────────────────────── */
+  --width-content:1120px;
+  --width-input:480px;
+  --width-prose:560px;
+  --width-popover:340px;
+  --width-modal:420px;
+  --height-topbar:56px;
+  --height-control:48px;
+  --card-min:212px;
+  --grid-gap:20px;
+
+  /* ── radii / elevation / motion ────────── */
+  --radius-sm:6px;
+  --radius-md:10px;
+  --radius-lg:14px;
+  --radius-pill:999px;
+  --shadow-input:0 1px 2px rgba(10,10,11,0.04);
+  --shadow-card:0 10px 28px rgba(10,10,11,0.10),0 1px 2px rgba(10,10,11,0.05);
+  --shadow-popover:0 12px 32px rgba(10,10,11,0.12),0 1px 3px rgba(10,10,11,0.06);
+  --duration-fast:120ms;
+  --duration-base:150ms;
+  --duration-slow:220ms;
+  --ease:cubic-bezier(0.2,0.8,0.3,1);
+
+  /* ── background bloom ──────────────────── */
+  --bloom-blur:130px;
+  --bloom-opacity-cyan:0.28;
+  --bloom-opacity-magenta:0.20;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--color-bg);
+  color:var(--color-text);
+  font-family:var(--font-body);
+  font-size:var(--text-body);
+  line-height:var(--leading-normal);
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--color-cyan-dim);text-decoration:none}
+a:hover{color:var(--color-data)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+[hidden]{display:none !important}
+.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* ── wordmark ─────────────────────────────── */
+.wordmark{
+  font-family:var(--font-mono);
+  font-size:var(--text-nano);
+  letter-spacing:var(--tracking-wider);
+  color:var(--color-text-muted);
+  text-transform:uppercase;
+}
+.wordmark:hover{color:var(--color-text-secondary)}
+
+/* ── threshold pills — STATEMENT, not control ── */
+.thresholds{
+  display:flex;flex-wrap:wrap;justify-content:center;
+  gap:var(--space-2);max-width:var(--width-prose);
+}
+.th{
+  padding:var(--space-1) var(--space-3);
+  font-size:var(--text-micro);line-height:20px;
+  color:var(--color-text-secondary);
+  background:var(--color-surface-sunken);
+  border-radius:var(--radius-pill);
+  white-space:nowrap;cursor:default;
+}
+
+/* ── background bloom (decoration only) ───── */
+.bloom{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.bloom__orb{position:absolute;border-radius:50%;filter:blur(var(--bloom-blur))}
+.bloom__orb--cyan{
+  width:880px;height:880px;top:-300px;left:50%;margin-left:-620px;
+  background:var(--color-cyan);opacity:var(--bloom-opacity-cyan);
+}
+.bloom__orb--magenta{
+  width:820px;height:820px;top:-200px;left:50%;margin-left:-160px;
+  background:var(--color-magenta);opacity:var(--bloom-opacity-magenta);
+}
+
+.topbar{
+  position:relative;z-index:2;height:var(--height-topbar);
+  max-width:var(--width-content);margin:0 auto;padding:0 var(--space-6);
+  display:flex;align-items:center;
+}
+.page{
+  position:relative;z-index:1;
+  max-width:var(--width-content);margin:0 auto;
+  padding:var(--space-9) var(--space-6) var(--space-8);
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+}
+.hero__title{
+  margin:0;font-family:var(--font-display);
+  font-size:var(--text-h1);font-weight:var(--weight-black);
+  line-height:var(--leading-tight);letter-spacing:var(--tracking-tight);
+}
+.hero__sub{
+  margin:var(--space-5) 0 0;max-width:var(--width-prose);
+  font-size:var(--text-body);color:var(--color-text-secondary);text-wrap:pretty;
+}
+.page .thresholds{margin-top:var(--space-5);max-width:760px;flex-wrap:nowrap}
+@media (max-width:820px){.page .thresholds{flex-wrap:wrap}}
+
+/* ── search ───────────────────────────────── */
+.search{margin-top:var(--space-6);width:var(--width-input)}
+.search__row{display:flex;gap:var(--space-3)}
+.search__field{position:relative;flex:1}
+.search__input{
+  width:100%;height:var(--height-control);
+  padding:0 var(--space-8) 0 var(--space-4);
+  font-family:var(--font-mono);font-size:var(--text-sm);color:var(--color-text);
+  background:var(--color-surface);
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-input);
+  transition:border-color var(--duration-fast) var(--ease),box-shadow var(--duration-fast) var(--ease);
+}
+.search__input::placeholder{color:var(--color-text-muted)}
+.search__input:hover{border-color:var(--color-border-strong)}
+.search__input:focus{outline:none;border-color:var(--color-focus-border);box-shadow:var(--focus-ring)}
+.search--thin .search__input{border-color:var(--color-magenta)}
+.search__spinner{
+  position:absolute;top:50%;right:var(--space-4);width:14px;height:14px;margin-top:-7px;
+  border:1.5px solid var(--color-border);border-top-color:var(--color-cyan);
+  border-radius:50%;animation:spin 700ms linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.search__submit{
+  height:var(--height-control);padding:0 var(--space-5);min-width:140px;
+  font-size:var(--text-sm);font-weight:var(--weight-medium);
+  color:var(--color-text-on-magenta);background:var(--color-magenta);
+  border-radius:var(--radius-md);text-align:center;
+  transition:background var(--duration-fast) var(--ease);
+}
+.search__submit:hover{background:var(--color-magenta-hover)}
+.search__submit:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+
+/* ── one-line yield status ────────────────── */
+.status{
+  margin:var(--space-3) 0 0;min-height:20px;
+  display:flex;align-items:center;gap:var(--space-2);
+  font-size:var(--text-xs);text-align:left;
+}
+.status__mark{font-family:var(--font-mono);font-size:var(--text-sm);line-height:1}
+.status--ok{color:var(--color-text-secondary)}
+.status--ok .status__mark{color:var(--color-data)}
+.status--thin{color:var(--color-text-secondary)}
+.status--thin .status__mark{color:var(--color-magenta)}
+.status--checking{color:var(--color-text-muted)}
+
+/* ── examples list ─────────────────────────── */
+.examples{margin-top:var(--space-6);width:var(--width-input);text-align:left}
+.examples__label{
+  display:flex;align-items:baseline;gap:var(--space-2);
+  margin:0 0 var(--space-2);padding:0 2px;
+  font-family:var(--font-mono);font-size:var(--text-nano);
+  letter-spacing:var(--tracking-wide);text-transform:uppercase;
+  color:var(--color-text-muted);
+}
+.examples__list{
+  border:1px solid var(--color-border);border-radius:var(--radius-md);
+  background:rgba(255,255,255,.55);overflow:hidden;
+  transition:border-color var(--duration-fast) var(--ease),box-shadow var(--duration-fast) var(--ease),transform var(--duration-fast) var(--ease);
+}
+.examples__list:hover{
+  border-color:var(--color-border-strong);
+  box-shadow:var(--shadow-input);transform:translateY(-1px);
+}
+.ex{
+  display:flex;align-items:center;gap:var(--space-3);
+  padding:var(--space-3) var(--space-4);color:inherit;
+  transition:background var(--duration-fast) var(--ease);
+}
+.ex + .ex{border-top:1px solid var(--color-border)}
+.ex:hover{color:inherit;background:var(--color-surface-hover)}
+.ex:hover .ex__brand{color:var(--color-data)}
+.ex:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.ex__brand{
+  flex:1;min-width:0;font-size:var(--text-xs);font-weight:var(--weight-medium);letter-spacing:.04em;
+  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color var(--duration-fast) var(--ease);
+}
+.ex__cat{flex:none;font-size:var(--text-micro);color:var(--color-text-muted)}
+.ex__n{
+  flex:none;min-width:66px;text-align:right;
+  font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+  font-size:var(--text-micro);color:var(--color-data);
+}
+.ex__arrow{
+  flex:none;display:flex;align-items:center;justify-content:center;
+  width:24px;height:24px;border-radius:var(--radius-pill);
+  font-family:var(--font-mono);font-size:var(--text-xs);font-weight:var(--weight-medium);
+  color:var(--color-text);background:var(--color-surface-sunken);
+  transition:transform var(--duration-fast) var(--ease),color var(--duration-fast) var(--ease),background var(--duration-fast) var(--ease);
+}
+.examples__list:hover .ex__arrow{
+  transform:translateX(3px);
+  color:var(--color-text-on-magenta);background:var(--color-magenta);
+}
+.ex:hover .ex__arrow{transform:translateX(3px)}
+
+/* ── invite modal ─────────────────────────── */
+.scrim{
+  position:fixed;inset:0;z-index:10;background:var(--color-scrim);
+  display:flex;align-items:center;justify-content:center;padding:var(--space-6);
+  opacity:0;transition:opacity var(--duration-fast) var(--ease);
+}
+.scrim.is-open{opacity:1}
+.modal{
+  width:var(--width-modal);padding:var(--space-6);
+  background:var(--color-surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-popover);
+  text-align:left;
+  opacity:0;transform:translateY(-4px);
+  transition:opacity var(--duration-fast) var(--ease),transform var(--duration-fast) var(--ease);
+}
+.scrim.is-open .modal{opacity:1;transform:translateY(0)}
+.modal__title{margin:0;font-size:var(--text-lg);font-weight:var(--weight-medium);letter-spacing:var(--tracking-tight)}
+.modal__body{margin:var(--space-3) 0 0;font-size:var(--text-xs);color:var(--color-text-secondary)}
+.modal__row{margin-top:var(--space-5);display:flex;gap:var(--space-3)}
+.modal__field{position:relative;flex:1}
+.modal__input{
+  width:100%;height:var(--height-control);
+  padding:0 var(--space-4);
+  font-family:var(--font-mono);font-size:var(--text-sm);color:var(--color-text);
+  background:var(--color-surface);
+  border:1px solid var(--color-border);border-radius:var(--radius-md);
+  transition:border-color var(--duration-fast) var(--ease),box-shadow var(--duration-fast) var(--ease);
+}
+.modal__input::placeholder{color:var(--color-text-muted)}
+.modal__input:hover{border-color:var(--color-border-strong)}
+.modal__input:focus{outline:none;border-color:var(--color-focus-border);box-shadow:var(--focus-ring)}
+.modal--error .modal__input{border-color:var(--color-magenta)}
+.modal__run{
+  flex:none;width:88px;height:var(--height-control);
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--text-sm);font-weight:var(--weight-medium);
+  color:var(--color-text-on-magenta);background:var(--color-magenta);
+  border-radius:var(--radius-md);
+  transition:background var(--duration-fast) var(--ease),opacity var(--duration-fast) var(--ease);
+}
+.modal__run:hover{background:var(--color-magenta-hover)}
+.modal__run:disabled{opacity:.45;cursor:default}
+.modal__run:disabled:hover{background:var(--color-magenta)}
+.modal__run:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.modal__spinner{
+  width:14px;height:14px;border:1.5px solid rgba(255,255,255,.4);border-top-color:#fff;
+  border-radius:50%;animation:spin 700ms linear infinite;
+}
+.modal__error{
+  margin:var(--space-2) 0 0;font-size:var(--text-xs);color:var(--color-magenta);min-height:16px;
+}
+.modal__foot{margin:var(--space-5) 0 0;font-size:var(--text-xs);color:var(--color-text-secondary)}
+.modal__foot a{color:var(--color-cyan-dim)}
+.modal__foot a:hover{color:var(--color-data)}
+
+/* ── state switcher (design deliverable only) ── */
+.states{
+  position:fixed;left:var(--space-5);bottom:var(--space-5);z-index:5;
+  display:flex;gap:var(--space-1);padding:var(--space-1);
+  background:var(--color-surface);border:1px solid var(--color-border);
+  border-radius:var(--radius-pill);box-shadow:var(--shadow-popover);
+}
+.states button{
+  padding:var(--space-1) var(--space-3);border-radius:var(--radius-pill);
+  font-family:var(--font-mono);font-size:var(--text-nano);color:var(--color-text-muted);
+}
+.states button[aria-pressed="true"]{background:var(--color-cyan-wash);color:var(--color-data)}
+</style>
+</head>
+<body>
+
+<div class="bloom" aria-hidden="true">
+  <div class="bloom__orb bloom__orb--cyan"></div>
+  <div class="bloom__orb bloom__orb--magenta"></div>
+</div>
+
+<header class="topbar"><a class="wordmark" href="/">Spark</a></header>
+
+<div class="scrim" id="scrim" hidden>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <h2 class="modal__title" id="modal-title">Live runs are invite-only during beta</h2>
+    <p class="modal__body">Each run crawls ~<span class="num">1,700</span> videos across <span class="num">17</span> searches, so access is limited for now.</p>
+    <div class="modal__row">
+      <div class="modal__field">
+        <input class="modal__input" id="invite" type="text" placeholder="invite code" autocomplete="off" spellcheck="false" aria-describedby="invite-error">
+      </div>
+      <button class="modal__run" id="modal-run" type="button" disabled>Run</button>
+    </div>
+    <p class="modal__error" id="invite-error" aria-live="polite"></p>
+    <p class="modal__foot">No code? <a href="spark-results.html">See a finished report →</a></p>
+  </div>
+</div>
+
+<main class="page">
+  <h1 class="hero__title">Skip the scroll.<br>Watch the 3% that hit.</h1>
+  <p class="hero__sub">TikTok's search filters suck — no date, no reach, no format. So researching a competitor's viral videos means digging through thousands first. Spark does the digging so you can just watch.</p>
+
+  <div class="thresholds" aria-label="Thresholds already applied">
+    <span class="th">Last 30 days</span>
+    <span class="th"><span class="num">10k+</span> views</span>
+    <span class="th"><span class="num">3%+</span> engagement</span>
+    <span class="th"><span class="num">10–90</span> sec</span>
+    <span class="th">English</span>
+    <span class="th">Video only</span>
+    <span class="th">Creators only</span>
+  </div>
+
+  <form class="search" id="search" action="/analyze" method="post">
+    <div class="search__row">
+      <div class="search__field">
+        <input class="search__input" id="brand" name="brand" type="text" placeholder="wavytalk" autocomplete="off" spellcheck="false">
+        <span class="search__spinner" id="spinner" hidden></span>
+      </div>
+      <button class="search__submit" type="submit">Start digging</button>
+    </div>
+    <p class="status" id="status" hidden><span class="status__mark" id="status-mark"></span><span id="status-text"></span></p>
+  </form>
+  <section class="examples">
+    <p class="examples__label">See a finished report <span>— no wait</span></p>
+    <div class="examples__list">
+      <a class="ex" href="spark-results.html">
+        <span class="ex__brand">Wavytalk</span>
+        <span class="ex__cat">hair tools · 47 videos</span>
+        <span class="ex__arrow">→</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<div class="states" role="group" aria-label="States">
+  <button type="button" data-state="default" aria-pressed="true">default</button>
+  <button type="button" data-state="checking" aria-pressed="false">checking</button>
+  <button type="button" data-state="ok" aria-pressed="false">yield ok</button>
+  <button type="button" data-state="thin" aria-pressed="false">too thin</button>
+  <button type="button" id="preview-modal">invite modal</button>
+</div>
+
+<script>
+(function () {
+  var form = document.getElementById('search');
+  var input = document.getElementById('brand');
+  var spinner = document.getElementById('spinner');
+  var status = document.getElementById('status');
+  var mark = document.getElementById('status-mark');
+  var text = document.getElementById('status-text');
+  var timer;
+
+  var COPY = {
+    ok: ['\u2713', 'Looks good \u2014 plenty to work with'],
+    thin: ['\u26A0', 'Only 3 videos came back. Check the spelling?']
+  };
+
+  function setState(name) {
+    clearTimeout(timer);
+    form.classList.remove('search--thin');
+    status.className = 'status';
+    if (name === 'default') { spinner.hidden = true; status.hidden = true; return; }
+    if (name === 'checking') {
+      spinner.hidden = false;
+      mark.textContent = '\u25D0';
+      text.textContent = 'Searching TikTok for \u201c' + (input.value.trim() || 'wavytalk') + '\u201d';
+      status.className = 'status status--checking';
+      status.hidden = false;
+      return;
+    }
+    spinner.hidden = true;
+    mark.textContent = COPY[name][0];
+    text.textContent = COPY[name][1];
+    status.classList.add(name === 'ok' ? 'status--ok' : 'status--thin');
+    if (name === 'thin') form.classList.add('search--thin');
+    status.hidden = false;
+  }
+
+  /* Probe is a server call in production (~30s over 20 videos); this only drives the states. */
+  input.addEventListener('blur', function () {
+    var v = input.value.trim();
+    if (!v) { setState('default'); return; }
+    setState('checking');
+    timer = setTimeout(function () { setState(v.length < 4 ? 'thin' : 'ok'); }, 1600);
+  });
+
+  var buttons = document.querySelectorAll('.states button');
+  Array.prototype.forEach.call(buttons, function (b) {
+    b.addEventListener('click', function () {
+      Array.prototype.forEach.call(buttons, function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+      setState(b.getAttribute('data-state'));
+    });
+  });
+
+  /* ── invite modal ── */
+  var scrim = document.getElementById('scrim');
+  var modal = document.getElementById('modal');
+  var invite = document.getElementById('invite');
+  var run = document.getElementById('modal-run');
+  var inviteError = document.getElementById('invite-error');
+  var submitBtn = form.querySelector('.search__submit');
+  var VALID_CODES = ['spark', 'beta2026'];
+  var checkTimer;
+  var lastFocus;
+
+  function openModal() {
+    lastFocus = document.activeElement;
+    scrim.hidden = false;
+    requestAnimationFrame(function () { scrim.classList.add('is-open'); });
+    invite.focus();
+  }
+  function closeModal() {
+    clearTimeout(checkTimer);
+    scrim.classList.remove('is-open');
+    setTimeout(function () { scrim.hidden = true; }, 120);
+    modal.classList.remove('modal--error');
+    if (lastFocus) lastFocus.focus();
+  }
+  function setRunBusy(busy) {
+    run.disabled = busy;
+    run.innerHTML = busy ? '<span class="modal__spinner"></span>' : 'Run';
+  }
+
+  invite.addEventListener('input', function () {
+    run.disabled = !invite.value.trim();
+    modal.classList.remove('modal--error');
+    inviteError.textContent = '';
+  });
+
+  function attemptRun() {
+    var code = invite.value.trim();
+    if (!code) return;
+    setRunBusy(true);
+    /* Code check is a server call in production; this stub only drives the states. */
+    checkTimer = setTimeout(function () {
+      if (VALID_CODES.indexOf(code.toLowerCase()) > -1) {
+        localStorage.setItem('spark_invite_ok', '1');
+        window.location.href = 'spark-loading.html';
+      } else {
+        setRunBusy(false);
+        run.disabled = false;
+        modal.classList.add('modal--error');
+        inviteError.textContent = "That code isn\u2019t right.";
+        invite.focus();
+      }
+    }, 900);
+  }
+
+  run.addEventListener('click', attemptRun);
+  invite.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); attemptRun(); }
+  });
+  scrim.addEventListener('mousedown', function (e) { if (e.target === scrim) closeModal(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !scrim.hidden) closeModal();
+    if (e.key === 'Tab' && !scrim.hidden) {
+      var focusables = [invite, run, modal.querySelector('.modal__foot a')];
+      var i = focusables.indexOf(document.activeElement);
+      if (e.shiftKey && document.activeElement === focusables[0]) { e.preventDefault(); focusables[focusables.length - 1].focus(); }
+      else if (!e.shiftKey && document.activeElement === focusables[focusables.length - 1]) { e.preventDefault(); focusables[0].focus(); }
+    }
+  });
+
+  submitBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    if (localStorage.getItem('spark_invite_ok') === '1') {
+      submitBtn.textContent = 'Starting…';
+      window.location.href = 'spark-loading.html';
+      return;
+    }
+    openModal();
+  });
+  document.getElementById('preview-modal').addEventListener('click', openModal);
+})();
+</script>
+</body>
+</html>
