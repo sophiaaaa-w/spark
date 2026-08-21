@@ -20,13 +20,13 @@ TikTok 的搜索没有筛选器。没有时间范围、没有播放量下限、�
 做营销的人想研究达人怎么讲一个竞品，只能打开 App 搜品牌名，然后一直往下划——
 划过几个月前的旧帖、图文轮播、外语视频、和只有 400 播放的内容。
 
-以某个美发工具品牌（下称 **W**）为例，搜索面上大约有 **1,700 条**视频，其中值得看的大约
+以某个美发工具品牌（下称 **W\***，名字略去）为例，搜索面上大约有 **1,700 条**视频，其中值得看的大约
 **47 条**。哪怕每条只花几秒判断，光是筛选就要三到五小时，真正的工作还没开始。
 
 ## Spark 做的事
 
 举个真实例子。这是
-**[W 那份跑好的报告](https://spark-production-bd06.up.railway.app/brief/baa8bf6bdae9)**
+**[美发工具品牌 W\* 那份跑好的报告](https://spark-production-bd06.up.railway.app/brief/baa8bf6bdae9)**
 顶部的一行字（点进去能看到完整的 47 条）：
 
 ```
@@ -90,7 +90,7 @@ Crawled 1,702 videos · 47 cleared every bar · max 3 per creator
 
 ## 漏斗到底砍掉了什么
 
-W 那次的真实数字：
+美发工具品牌 W\* 那次的真实数字：
 
 | 关卡 | 剩余 | 淘汰 |
 |---|---:|---:|
@@ -165,14 +165,14 @@ TikTok's search has no filters. No date range, no view floor, no duration, no
 competitor, you open the app, search the brand, and scroll — through months-old
 posts, photo slideshows, foreign-language clips, and videos with 400 views.
 
-For one hair-tool brand (call it **W**), the raw search surface is about **1,700
+For one hair-tool brand — call it **W\***, name withheld — the raw search surface is about **1,700
 videos**. Roughly **47** of them are worth watching. At a few seconds each just
 to judge, that's three to five hours of screening before the actual work starts.
 
 ## What Spark does
 
 A real example — this line sits at the top of
-**[the finished W report](https://spark-production-bd06.up.railway.app/brief/baa8bf6bdae9)**
+**[the finished report for W\*, a hair-tool brand](https://spark-production-bd06.up.railway.app/brief/baa8bf6bdae9)**
 (open it to see all 47):
 
 ```
@@ -244,7 +244,7 @@ this project costs a few dollars per run instead of fifty.
 
 ## What the funnel actually removes
 
-Real numbers from the W run:
+Real numbers from the W\* (hair tools) run:
 
 | Gate | Remaining | Cut |
 |---|---:|---:|
