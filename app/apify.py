@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import datetime, timedelta, timezone
 
 import httpx
 
@@ -155,36 +154,3 @@ class Apify:
 
         pairs = await asyncio.gather(*(one(l, p) for l, p in payloads))
         return dict(pairs)
-
-    async def author_history(self, username: str, *, since_ts: int) -> list[dict]:
-        """抓某账号的历史视频，用于算基线。
-
-        实测：日期下界参数在 profiles 上生效（搜索上不生效），所以这里可以精确按
-        日期抓 —— 慢更账号只回十几条，高频账号回够为止，两头都不浪费。
-        """
-        since = datetime.fromtimestamp(since_ts, tz=timezone.utc).strftime("%Y-%m-%d")
-        return await self.run(
-            {
-                "profiles": [username.lstrip("@")],
-                "resultsPerPage": C.HISTORY_FETCH_MAX,
-                "oldestPostDate": since,
-            },
-            label=f"history:{username}",
-        )
-
-    async def author_histories(self, usernames: list[str], *, since_ts: int,
-                               concurrency: int = 6) -> dict[str, list[dict]]:
-        """并发抓多个账号的历史。限并发，避免一次开几十个 run。"""
-        sem = asyncio.Semaphore(concurrency)
-
-        async def one(u: str) -> tuple[str, list[dict]]:
-            async with sem:
-                return u, await self.author_history(u, since_ts=since_ts)
-
-        pairs = await asyncio.gather(*(one(u) for u in usernames))
-        return dict(pairs)
-
-
-def default_since_ts(days: int = C.BASELINE_WINDOW_DAYS + C.WINDOW_DAYS) -> int:
-    """基线要回溯到「最早候选视频的 T − 90d」，最坏情况是 30 + 90 = 120 天前。"""
-    return int((datetime.now(timezone.utc) - timedelta(days=days)).timestamp())

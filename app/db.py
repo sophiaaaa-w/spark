@@ -1,4 +1,9 @@
-"""SQLite schema（PRD 第六节）。所有数据放在 DATA_DIR，Railway 上必须挂 Volume。"""
+"""SQLite schema。
+
+只有两张表：任务状态和已完成的报告。报告正文写在 DATA_DIR/briefs/*.json，
+库里只存索引字段 —— 结果是一个几十上百 KB 的嵌套结构，塞进关系表除了
+增加序列化开销没有任何好处，没有一个查询需要按视频维度过滤。
+"""
 import sqlite3
 
 from .config import DATA_DIR, DB_PATH, FRAMES_DIR
@@ -21,39 +26,13 @@ CREATE TABLE IF NOT EXISTS briefs (
   job_id        TEXT PRIMARY KEY,
   handle        TEXT,
   brand         TEXT,
-  category      TEXT,
+  category      TEXT,            -- 首页 demo 卡片上那行小字，手工填
   patterns_json TEXT,
   sources_json  TEXT,
-  stats_json    TEXT,
+  stats_json    TEXT,            -- {"count": 47, "crawled": 1702}
   is_demo       INTEGER DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS brief_translations (
-  job_id        TEXT,
-  lang          TEXT,
-  patterns_json TEXT,
-  PRIMARY KEY (job_id, lang)
-);
-
--- 缓存原始序列而非单个中位数：同一账号的不同目标视频，时间窗不同，分母也不同
-CREATE TABLE IF NOT EXISTS author_videos (
-  author_id     TEXT,
-  video_id      TEXT,
-  published_at  INTEGER,
-  plays         INTEGER,
-  PRIMARY KEY (author_id, video_id)
-);
-
-CREATE TABLE IF NOT EXISTS author_meta (
-  author_id         TEXT PRIMARY KEY,
-  username          TEXT,
-  follower_count    INTEGER,
-  fetched_count     INTEGER,
-  oldest_fetched_at INTEGER,
-  updated_at        INTEGER
-);
-
-CREATE INDEX IF NOT EXISTS idx_author_videos_author ON author_videos(author_id);
 CREATE INDEX IF NOT EXISTS idx_jobs_created ON jobs(created_at DESC);
 """
 
