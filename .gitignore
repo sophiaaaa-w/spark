@@ -1,0 +1,24 @@
+# 密钥。任何 .env 都不进仓库，只有示例模板进。
+.env
+.env.*
+*.env
+!.env.example
+
+# 运行数据。717MB，大头是下载的视频。
+# demo 需要的那部分单独放在 seed/，那个目录是进仓库的。
+data/
+
+# 早期探测留下的原始 Apify 返回，23MB，只是当时的证据
+fixtures/*.json
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+
+static/frames/
+
+# 本地生成的预览文件
+preview-*.html
+design-results-*.html

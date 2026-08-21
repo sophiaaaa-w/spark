@@ -1,0 +1,282 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
+<title>Outlier — wavytalk</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cyan:#00CFC8; --cyan-wash:#E6FBFA; --magenta:#FE2C55;
+  --bg:#fff; --sunken:#F6F6F7; --border:rgba(10,10,11,.10);
+  --text:#0E0E10; --text-2:#5C5C64; --text-3:#6B6B75; --data:#0B7F7B;
+  --mono:"Geist Mono","JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;padding:48px 32px 96px;background:var(--bg);color:var(--text);
+  font:16px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text-3)}
+h1{font-size:40px;font-weight:700;letter-spacing:-.02em;margin:.3em 0 .2em}
+.sub{color:var(--text-2);margin:0 0 40px}
+.stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:48px}
+.stat{background:var(--sunken);border-radius:10px;padding:14px 18px;min-width:150px}
+.stat b{display:block;font-family:var(--mono);font-size:26px;font-weight:500;
+  font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--text-3)}
+.pat{border-top:1px solid var(--border);padding-top:32px;margin-top:48px}
+.pat h2{font-size:28px;font-weight:700;letter-spacing:-.02em;margin:0 0 6px}
+.num{font-family:var(--mono);color:var(--text-3);margin-right:10px}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 18px}
+.tag{font-size:12px;padding:3px 10px;border-radius:999px;background:var(--sunken);
+  color:var(--text-2)}
+.tag.warn{background:#FFEEF1;color:#A3122F}
+.tag.good{background:var(--cyan-wash);color:var(--data)}
+.metrics{font-family:var(--mono);font-size:13px;color:var(--text-2);
+  font-variant-numeric:tabular-nums;margin-bottom:18px}
+.metrics b{color:var(--data)}
+.why{max-width:680px;color:var(--text-2);margin:0 0 24px}
+.quotes{margin:0 0 32px;padding:0;list-style:none}
+.quotes li{font-family:var(--mono);font-size:13px;color:var(--text-2);
+  border-left:2px solid var(--border);padding:4px 0 4px 14px;margin-bottom:8px}
+.src{font-family:var(--mono);font-size:12px;color:var(--text-3);margin-bottom:14px}
+.src a{color:var(--data)}
+.head{display:grid;grid-template-columns:96px 1fr 40%;gap:20px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-3);padding-bottom:10px;border-bottom:1px solid var(--border)}
+.seg{display:grid;grid-template-columns:96px 1fr 40%;gap:20px;
+  padding:20px 0;border-bottom:1px solid var(--border);align-items:start}
+.seg img{width:96px;border-radius:8px;display:block;background:var(--sunken)}
+.t{font-family:var(--mono);font-size:12px;color:var(--text-3);margin-top:6px;
+  font-variant-numeric:tabular-nums}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--text-3)}
+.vis{margin:4px 0 10px}
+.vo{font-family:var(--mono);font-size:13px;color:var(--text-2);
+  background:var(--sunken);padding:8px 12px;border-radius:8px}
+.vo .ok{color:var(--data)} .vo .bad{color:var(--magenta);font-weight:500}
+.right{border-left:2px solid var(--cyan);padding-left:16px}
+.move{font-weight:500;color:var(--data);margin-bottom:4px}
+.fn{font-size:14px;color:var(--text-2)}
+.none{color:var(--text-3);font-style:italic}
+</style></head><body><div class="wrap">
+<div class="eyebrow">Outlier · 预览</div>
+<h1>wavytalk</h1>
+<p class="sub">@wavytalkofficial · unknown · TikTok 近 30 天</p>
+<div class="stats">
+  <div class="stat"><b>50</b><span>分析的视频</span></div>
+  <div class="stat"><b>3</b><span>识别出的 pattern</span></div>
+  <div class="stat"><b>18</b><span>未归类</span></div>
+</div>
+<section class="pat">
+  <h2><span class="num">01</span>Step-by-step spec walkthrough</h2>
+  <div class="tags"></div>
+  <div class="metrics">占比 <b>20/50</b>
+    　　互动率中位 <b>5.0%</b>
+    　　播放中位 <b>30,650</b></div>
+  <p class="why">Hair tool buyers are scared of wasting money or burning their hair, so they want proof the tool actually works before they trust it. Walking through the exact settings, attachments, and timing (hot air 10 seconds, cool air 5, wrap smaller sections) turns a purchase decision into something the viewer can copy immediately, which is what gets saved and shared in this category.</p>
+  <ul class="quotes"><li>「Hot air for 10 seconds, cool air for five, then turn it off before releasing the curl.」</li><li>「This one releases steam as you straighten, so it helps add moisture back into your strands while you style」</li><li>「It literally sucks everything up. Another thing I really liked about this is it does not pull your hair.」</li></ul>
+  <div class="src">Structure from <a href="https://www.tiktok.com/@mo__styles/video/7664729809204956429" target="_blank">@mo__styles 的这条视频 ↗</a> · 点开可逐帧核对</div><div class="head"><div>帧</div><div>What they did</div><div>The move · in unknown</div></div><div class="seg">
+  <div><img src="../data/frames/7664729809204956429_01.jpg" alt="frame"><div class="t">2.0s · frame 1</div></div>
+  <div>
+    <div class="label">HOOK · 0–5s</div>
+    <div class="vis">Creator throws the brush in frustration mid-styling, then talks to camera holding it, split between two outfits/scenes.</div>
+    <div class="vo">「it Swooped it again Jeez, I wanted spiral curls. she&#x27;s gonna be the death of me.」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">Frustration cold open</div>
+    <div class="fn">Opens on the exact failure the viewer keeps having, so they stay to find out what went wrong.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7664729809204956429_04.jpg" alt="frame"><div class="t">15.0s · frame 4</div></div>
+  <div>
+    <div class="label">DIAGNOSIS · 5–15s</div>
+    <div class="vis">Second self answers to camera, then demonstrates pulling the brush straight down through a section of hair.</div>
+    <div class="vo">「If you want spiral curls, just don&#x27;t pull it straight down. Wait, what? Okay, so when you pull the Thermal brush straight all the way down it&#x27;ll give you that swooped blowout look, which I don&#x27;t want.」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">Name the mistake</div>
+    <div class="fn">Shows the wrong technique and the result it creates, so the viewer recognises their own habit.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7664729809204956429_05.jpg" alt="frame"><div class="t">19.3s · frame 5</div></div>
+  <div>
+    <div class="label">STEP ONE · 15–25s</div>
+    <div class="vis">Hair is wrapped around the barrel of the brush and twisted while pulling down; the section slips out.</div>
+    <div class="vo">「Right. So instead, wrap your hair around the Thermal brush. Okay. Then twist it while you pull down to create a spiral. It&#x27;s falling off.」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">Wrap and twist</div>
+    <div class="fn">Gives the core motion in two plain instructions the viewer can copy on the first try.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7664729809204956429_07.jpg" alt="frame"><div class="t">30.9s · frame 7</div></div>
+  <div>
+    <div class="label">FIX · 25–36s</div>
+    <div class="vis">Close framing on the barrel with hair wrapped so the bristles poke through the section, held up to camera.</div>
+    <div class="vo">「Oh, that&#x27;s okay. Let&#x27;s try again. And this time, when you wrap the hair, make sure you can see those bristles poking through. Like this? Yeah. This is gonna give you more tension so the hair won&#x27;t fall off.」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">Fix the slip</div>
+    <div class="fn">Turns the failed attempt into a specific visual checkpoint, so the viewer knows when they&#x27;ve done it right.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7664729809204956429_10.jpg" alt="frame"><div class="t">48.0s · frame 10</div></div>
+  <div>
+    <div class="label">UPGRADE · 36–53s</div>
+    <div class="vis">Full pull-and-twist demonstrated to the ends, then a second section wrapped in the opposite direction.</div>
+    <div class="vo">「So pull and twist at the same time, all the way down your hair until you reach your ends. Whoa! And if you want more volume, alternate the direction you&#x27;re twisting the brush. So if you did one direction away from your face, the next one you would twist it towards your face.」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">Bonus volume tip</div>
+    <div class="fn">Adds one advanced tweak on top of the basic method, giving a reason to save the video.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7664729809204956429_11.jpg" alt="frame"><div class="t">55.5s · frame 11</div></div>
+  <div>
+    <div class="label">PAYOFF · 53–56s</div>
+    <div class="vis">Creator sits back holding the brush, hair now in defined spiral curls, smiling at camera.</div>
+    <div class="vo">「Yes! This is exactly what I wanted. Good. Now stop throwing things.」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">Result and punchline</div>
+    <div class="fn">Shows the finished curls that answer the opening complaint, closed with a joke callback.</div>
+  </div>
+</div>
+</section><section class="pat">
+  <h2><span class="num">02</span>Result-only shock cut</h2>
+  <div class="tags"><span class="tag warn">⚠ 大家都在拍但传播最差</span><span class="tag">样本支撑较薄</span></div>
+  <div class="metrics">占比 <b>6/50</b>
+    　　互动率中位 <b>4.5%</b>
+    　　播放中位 <b>782,500</b></div>
+  <p class="why">In hair tools the transformation itself is the proof, so showing only the reveal with a stunned caption like a single emoji lets the visual do the selling without any claim the viewer could doubt. No voiceover means no chance to sound like an ad, which matters because this audience is allergic to obvious sponsored talk.</p>
+  <ul class="quotes"><li>「🤯」</li><li>「Steam-powered straightening 👀 It leaves my hair soft &amp; smooth ☁️✨」</li><li>「The blowouts with this tool 😩😩😩」</li></ul>
+  <div class="src">Structure from <a href="https://www.tiktok.com/@marianamoragui1/video/7668536539567164703" target="_blank">@marianamoragui1 的这条视频 ↗</a> · 点开可逐帧核对</div><div class="head"><div>帧</div><div>What they did</div><div>The move · in unknown</div></div><div class="seg">
+  <div><img src="../data/frames/7668536539567164703_00.jpg" alt="frame"><div class="t">0.0s · frame 0</div></div>
+  <div>
+    <div class="label">HOOK · 0–2s</div>
+    <div class="vis">Close-up of a pink barrel styling tool held up to camera, creator in background with hair clipped up; on-screen text claims the coolest hair tool ever.</div>
+    <div class="vo none">这一段没有口播</div>
+  </div>
+  <div class="right">
+    <div class="move">Silent tool flash</div>
+    <div class="fn">Opens on the tool itself with a bold text claim, no talking, so the viewer stays to see what it does.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7668536539567164703_02.jpg" alt="frame"><div class="t">3.0s · frame 2</div></div>
+  <div>
+    <div class="label">SETUP · 2–6s</div>
+    <div class="vis">Creator wraps a section of hair around the barrel, then shown clipping the wrapped curl to her head.</div>
+    <div class="vo none">这一段没有口播</div>
+  </div>
+  <div class="right">
+    <div class="move">First section wrap</div>
+    <div class="fn">Shows the basic move once so the viewer instantly understands how the styling works.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7668536539567164703_04.jpg" alt="frame"><div class="t">7.8s · frame 4</div></div>
+  <div>
+    <div class="label">MECHANIC · 6–12s</div>
+    <div class="vis">Detachable barrel head is held up to camera, then she slides a wrapped roller off and pins it in place.</div>
+    <div class="vo none">这一段没有口播</div>
+  </div>
+  <div class="right">
+    <div class="move">The gimmick reveal</div>
+    <div class="fn">Shows the barrel detaching into a roller, the one detail that makes the tool different from a normal wand.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7668536539567164703_09.jpg" alt="frame"><div class="t">18.0s · frame 9</div></div>
+  <div>
+    <div class="label">PROOF · 12–20s</div>
+    <div class="vis">Rapid repeats of wrapping, detaching and clipping sections across the head, head filling with pinned rollers.</div>
+    <div class="vo none">这一段没有口播</div>
+  </div>
+  <div class="right">
+    <div class="move">Repeat till full</div>
+    <div class="fn">Speed-runs the same step around the whole head, showing this is a full blowout not a one-curl trick.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7668536539567164703_11.jpg" alt="frame"><div class="t">22.2s · frame 11</div></div>
+  <div>
+    <div class="label">PAYOFF · 20–23s</div>
+    <div class="vis">Overhead then side view of the head fully loaded with glossy pinned rollers, creator posing to camera.</div>
+    <div class="vo none">这一段没有口播</div>
+  </div>
+  <div class="right">
+    <div class="move">Set-and-pose freeze</div>
+    <div class="fn">Ends on the finished roller set as the visual result, leaving the payoff implied rather than claimed.</div>
+  </div>
+</div>
+</section><section class="pat">
+  <h2><span class="num">03</span>Character or event storytelling</h2>
+  <div class="tags"><span class="tag good">⚡ 少有人做但一做就灵</span><span class="tag">样本支撑较薄</span></div>
+  <div class="metrics">占比 <b>6/50</b>
+    　　互动率中位 <b>8.2%</b>
+    　　播放中位 <b>126,950</b></div>
+  <p class="why">Wrapping the product into a costume bit, a mom&#x27;s emotional moment, or a fun brand party gives people a reason to watch to the end that has nothing to do with the product pitch itself, which is exactly what makes hair-tool ad fatigue disappear. The tool becomes a supporting prop inside a story the viewer already wants to see finish.</p>
+  <ul class="quotes"><li>「Edward gave me this wavy talk steam session so my hair can be as smooth as his butt」</li><li>「she has been a little curious lately of what she will look like with straight hair」</li><li>「getting ready at the event is way more fun than getting ready at home」</li></ul>
+  <div class="src">Structure from <a href="https://www.tiktok.com/@mikeysaoma/video/7672496456334331166" target="_blank">@mikeysaoma 的这条视频 ↗</a> · 点开可逐帧核对</div><div class="head"><div>帧</div><div>What they did</div><div>The move · in unknown</div></div><div class="seg">
+  <div><img src="../data/frames/7672496456334331166_00.jpg" alt="frame"><div class="t">0.0s · frame 0</div></div>
+  <div>
+    <div class="label">HOOK · 0–5s</div>
+    <div class="vis">Close-up of the creator in a white tank top with huge frizzy hair, pulling a strand over a pink straightener while steam rises, shouting.</div>
+    <div class="vo">「It&#x27;s smoking! Oh my god! Oh my god! Is that bad? Whoa! Whoa!」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">Panic cold open</div>
+    <div class="fn">Opens mid-freakout with visible steam so the viewer stops to find out whether something is going wrong.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7672496456334331166_02.jpg" alt="frame"><div class="t">6.0s · frame 2</div></div>
+  <div>
+    <div class="label">SETUP · 5–18s</div>
+    <div class="vis">Creator faces camera in the bathroom, huge untamed hair framing his face, gesturing as he talks.</div>
+    <div class="vo">「Bella&#x27;s got inches. Come with me to straighten my bush. My bush. I mean my hair, cause it&#x27;s like a bush frizzy. A lot of you might not know this, but Bella Lucas one actually has really curly hair.」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">In-character premise</div>
+    <div class="fn">Sets up the movie-parody character and the frizz problem, so the clip reads as a bit, not an ad.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7672496456334331166_04.jpg" alt="frame"><div class="t">22.2s · frame 4</div></div>
+  <div>
+    <div class="label">PRODUCT INTRO · 18–29s</div>
+    <div class="vis">Hair-flip whip, then the creator holds the pink steam straightener up to the lens, plates open toward camera.</div>
+    <div class="vo">「Woah! My hair always looks like Jake&#x27;s fur pubes cause it&#x27;s so humid and forks. Edward gave me this wavy talk steam session so my hair can be as smooth as his butt. Here goes everything.」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">Gift from a character</div>
+    <div class="fn">Hands the tool to the viewer through the story world, so the product reveal lands as a plot beat.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7672496456334331166_07.jpg" alt="frame"><div class="t">42.2s · frame 7</div></div>
+  <div>
+    <div class="label">DEMO · 29–49s</div>
+    <div class="vis">Creator glides the steaming straightener down a section, mouth open in shock, frizzy hair still visible on the other side.</div>
+    <div class="vo">「Wolf. Turns out it straightens with steam, which somehow moisturizes it. I that confuses me. I, werewolf, who I put in the removable comb to help with my pubic ends. Edward says the hydration from the steam helps seal the hair cuticle, which makes my hair less prone to bush out this foggy Fork summer.」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">Jokes over specs</div>
+    <div class="fn">Slips the how-it-works explanation between character gags so the technical bit never feels like a lecture.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7672496456334331166_09.jpg" alt="frame"><div class="t">55.5s · frame 9</div></div>
+  <div>
+    <div class="label">PAYOFF · 49–65s</div>
+    <div class="vis">Creator swishes now-straight glossy hair side to side and runs fingers through it from root to end.</div>
+    <div class="vo">「One pass. That was one pass. Now I&#x27;m prepared for any cold wet thing. So shiny and smooth. Whoa! It&#x27;s like a bird&#x27;s skin. Bella can never run her fingers through her hair before. And now Bella&#x27;s feeling Bonita.」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">Finger-through-hair proof</div>
+    <div class="fn">Delivers the visible before-after with a touch test, giving the story its satisfying ending.</div>
+  </div>
+</div><div class="seg">
+  <div><img src="../data/frames/7672496456334331166_11.jpg" alt="frame"><div class="t">69.0s · frame 11</div></div>
+  <div>
+    <div class="label">CTA · 65–70s</div>
+    <div class="vis">Creator talks straight to camera with smooth straight hair, then reacts as if startled at the end.</div>
+    <div class="vo">「If your hair is anything like mine, run, don&#x27;t walk. By the way, we talk steam sesh. Jacob, run!」 <span class="ok">✓ 逐字</span></div>
+  </div>
+  <div class="right">
+    <div class="move">Punchline sign-off</div>
+    <div class="fn">Ties the buy-it line to a closing joke so the ask exits on a laugh rather than a pitch.</div>
+  </div>
+</div>
+</section>
+</div></body></html>

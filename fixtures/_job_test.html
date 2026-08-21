@@ -1,0 +1,190 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>wavytalk — Spark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,700,900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cyan:#00CFC8; --cyan-wash:#E6FBFA; --magenta:#FE2C55;
+  --magenta-hover:#E62149; --magenta-wash:#FFEEF1;
+  --bg:#fff; --sunken:#F6F6F7;
+  --border:rgba(10,10,11,.10); --border-strong:rgba(10,10,11,.22);
+  --text:#0E0E10; --text-2:#5C5C64; --text-3:#6B6B75; --data:#0B7F7B;
+  --display:"Satoshi","General Sans",system-ui,sans-serif;
+  --body:Inter,system-ui,sans-serif;
+  --mono:"Geist Mono","JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.55 var(--body);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* 晕染：只在背景层，唯一的装饰 */
+.bloom{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.orb{position:absolute;border-radius:50%;filter:blur(130px)}
+.orb-c{width:880px;height:880px;top:-320px;left:50%;margin-left:-620px;
+  background:var(--cyan);opacity:.28}
+.orb-m{width:820px;height:820px;top:-220px;left:50%;margin-left:-160px;
+  background:var(--magenta);opacity:.18}
+
+.topbar{position:relative;z-index:2;display:flex;align-items:center;
+  justify-content:space-between;height:52px}
+.wordmark{font-family:var(--mono);font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text-3)}
+.wordmark:hover{color:var(--text-2)}
+.count{font-family:var(--mono);font-size:13px;color:var(--data);
+  font-variant-numeric:tabular-nums}
+
+/* ── 首页 ─────────────────────────────────── */
+.hero{position:relative;z-index:1;display:flex;flex-direction:column;
+  align-items:center;text-align:center;padding:88px 0 72px}
+h1{font-family:var(--display);font-size:52px;font-weight:900;
+  letter-spacing:-.025em;line-height:1.06;margin:0}
+.sub{max-width:560px;color:var(--text-2);margin:24px 0 0;text-wrap:pretty}
+.gates{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
+  max-width:560px;margin:24px 0 0}
+.gate{font-size:12px;padding:4px 11px;border-radius:999px;
+  background:var(--sunken);color:var(--text-2)}
+.gate .n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+form{margin-top:32px;width:480px;max-width:100%}
+.row{display:flex;gap:12px}
+.field{position:relative;flex:1}
+input[type=text]{width:100%;height:48px;padding:0 44px 0 16px;
+  font-family:var(--mono);font-size:15px;color:var(--text);background:#fff;
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:0 1px 2px rgba(10,10,11,.04);transition:border-color .12s,box-shadow .12s}
+input[type=text]::placeholder{color:var(--text-3)}
+input[type=text]:hover{border-color:var(--border-strong)}
+input[type=text]:focus{outline:none;border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(0,207,200,.28)}
+.spin{position:absolute;top:50%;right:16px;width:14px;height:14px;margin-top:-7px;
+  border:1.5px solid var(--border);border-top-color:var(--cyan);border-radius:50%;
+  animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.go{height:48px;padding:0 24px;font-size:15px;font-weight:500;color:#fff;
+  background:var(--magenta);border:0;border-radius:10px;transition:background .12s}
+.go:hover{background:var(--magenta-hover)}
+.go:disabled{opacity:.45;cursor:not-allowed}
+.status{margin-top:12px;font-size:13px;text-align:left;min-height:20px;
+  color:var(--text-3)}
+.status.ok{color:var(--data)}
+.status.warn{color:var(--magenta)}
+.demos{margin-top:40px;width:480px;max-width:100%}
+.demos p{margin:0 0 10px;font-size:13px;color:var(--text-2);text-align:left}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.demo{display:block;padding:14px 16px;text-align:left;background:var(--sunken);
+  border:1px solid var(--border);border-radius:10px;transition:border-color .12s,background .12s}
+.demo:hover{border-color:var(--cyan);background:var(--cyan-wash)}
+.demo b{display:block;font-size:14px;font-weight:500}
+.demo span{font-family:var(--mono);font-size:11.5px;color:var(--text-2);
+  font-variant-numeric:tabular-nums}
+
+/* ── 进度页 ───────────────────────────────── */
+.load{position:relative;z-index:1;display:flex;flex-direction:column;
+  align-items:center;text-align:center;padding:140px 0}
+.load h2{font-family:var(--display);font-size:32px;font-weight:700;margin:0 0 40px}
+.bar{width:480px;max-width:100%;height:4px;background:var(--sunken);
+  border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:999px;
+  background:linear-gradient(90deg,var(--cyan),var(--magenta));
+  transition:width .6s ease}
+.pct{font-family:var(--mono);font-size:32px;font-weight:500;margin:20px 0 6px;
+  font-variant-numeric:tabular-nums}
+.stage{font-size:14px;color:var(--text-2);transition:opacity .15s;min-height:22px}
+.note{margin-top:40px;font-size:13px;color:var(--text-3)}
+
+/* ── 结果页 ───────────────────────────────── */
+.head{position:relative;z-index:1;padding-top:28px}
+.head h1{font-size:38px;letter-spacing:-.02em}
+.meta{font-family:var(--mono);font-size:13px;color:var(--text-3);margin:2px 0 16px}
+.yield{font-size:13.5px;color:var(--text-2);margin:0 0 12px}
+.yield b{font-family:var(--mono);color:var(--text);font-weight:500;
+  font-variant-numeric:tabular-nums}
+.filters{border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:14px 0;margin:28px 0;display:flex;flex-wrap:wrap;gap:22px}
+.fgroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.flabel{font-family:var(--mono);font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text-3)}
+.f{font-size:12.5px;padding:4px 12px;border-radius:999px;border:1px solid var(--border);
+  background:#fff;color:var(--text-2);user-select:none;
+  transition:border-color .12s,background .12s,color .12s}
+.f:hover{border-color:var(--border-strong)}
+.f.on{background:var(--cyan-wash);border-color:var(--cyan);color:var(--data);
+  font-weight:500}
+.f .n{font-family:var(--mono);opacity:.65;margin-left:4px}
+.found{font-family:var(--mono);font-size:11.5px;color:var(--text-3);
+  margin:0 0 8px;line-height:1.7}
+.found b{color:var(--data);font-weight:400}
+.shown{font-family:var(--mono);font-size:12.5px;color:var(--text-3);
+  margin:0 0 16px;font-variant-numeric:tabular-nums}
+.legend{font-family:var(--body)}
+.legend::before{content:"■";color:var(--data);margin-right:5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));
+  gap:20px;padding-bottom:96px}
+.card{display:block}
+.card:hover .thumb{border-color:var(--border-strong)}
+.card:hover .author{color:var(--text)}
+.thumb{position:relative;aspect-ratio:9/16;border-radius:10px;overflow:hidden;
+  background:var(--sunken);border:1px solid var(--border);transition:border-color .12s}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.noimg{display:grid;place-items:center;height:100%;font-family:var(--mono);
+  font-size:11px;color:var(--text-3)}
+.badge{position:absolute;top:8px;left:8px;background:var(--magenta);color:#fff;
+  font-family:var(--mono);font-size:11px;font-weight:500;padding:3px 8px;
+  border-radius:999px;font-variant-numeric:tabular-nums}
+.dur{position:absolute;bottom:8px;right:8px;background:rgba(10,10,11,.72);color:#fff;
+  font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:6px;
+  font-variant-numeric:tabular-nums}
+.stats{margin:10px 0 4px;font-family:var(--mono);font-size:12.5px;line-height:1.45;
+  font-variant-numeric:tabular-nums;color:var(--text-2)}
+.stats b{color:var(--text);font-weight:500}
+.stats .er b{color:var(--data)}
+.author{font-size:13px;color:var(--text-2);white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;margin-bottom:2px}
+.attrs{font-family:var(--mono);font-size:11.5px;color:var(--text-3);
+  font-variant-numeric:tabular-nums}
+.src{font-family:var(--mono);font-size:11px;color:var(--text-3);margin-top:6px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src.mined{color:var(--data)}
+.empty{padding:60px 0;text-align:center;color:var(--text-3)}
+
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+  h1{font-size:34px}
+  .head h1{font-size:28px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+  form,.demos,.bar{width:100%}
+  .filters{gap:14px}
+}
+</style></head><body><div class="bloom" aria-hidden="true"><div class="orb orb-c"></div><div class="orb orb-m"></div></div><div class="wrap"><header class="topbar">
+  <a class="wordmark" href="/">Spark</a></header>
+<main class="load">
+  <h2>Reading TikTok</h2>
+  <div class="bar"><i></i></div>
+  <div class="pct" id="pct">0%</div>
+  <div class="stage" id="stage">Starting…</div>
+  <p class="note">This takes about 10 minutes. You can close this tab —
+    the link stays live.</p>
+</main></div><script>
+const ID=location.pathname.split('/').pop();
+const bar=document.querySelector('.bar i'),pct=document.getElementById('pct'),
+      stage=document.getElementById('stage');
+function poll(){
+  fetch('/api/jobs/'+ID).then(r=>r.json()).then(d=>{
+    if(d.status==='done'){location.href='/brief/'+ID;return;}
+    if(d.status==='failed'){stage.textContent='Something went wrong: '+(d.error||'');
+      return;}
+    bar.style.width=(d.progress_pct||0)+'%';
+    pct.textContent=(d.progress_pct||0)+'%';
+    const txt=(d.stage_detail? d.stage+' — '+d.stage_detail : d.stage)||'';
+    if(stage.textContent!==txt){
+      stage.style.opacity=0;
+      setTimeout(()=>{stage.textContent=txt;stage.style.opacity=1;},150);
+    }
+    setTimeout(poll,3000);
+  }).catch(()=>setTimeout(poll,5000));
+}
+poll();
+</script></body></html>

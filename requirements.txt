@@ -1,0 +1,12 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+httpx==0.28.1
+anthropic==0.42.0
+jinja2==3.1.5
+python-multipart==0.0.20
+
+# 实测 Apify 的 mediaUrls 是空数组，视频要自己下
+yt-dlp==2025.1.15
+
+# openai 二期再加：TikTok 自带 WebVTT 字幕覆盖 71% 且带时间戳，
+# MVP 直接要求骨架视频必须有字幕，不需要 Whisper
