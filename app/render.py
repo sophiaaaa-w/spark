@@ -104,6 +104,34 @@ input[type=text]:focus{outline:none;border-color:var(--cyan);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .arrow{flex:none;color:var(--text-3);transition:transform .12s,color .12s}
 
+/* ── 邀请码弹窗 ───────────────────────────── */
+.scrim{position:fixed;inset:0;z-index:20;display:grid;place-items:center;
+  background:rgba(10,10,11,.62);opacity:0;transition:opacity .12s}
+.scrim.on{opacity:1}
+.scrim[hidden]{display:none}
+.modal{width:420px;max-width:calc(100% - 32px);padding:32px;background:#fff;
+  border:1px solid var(--border);border-radius:14px;
+  box-shadow:0 12px 32px rgba(10,10,11,.13),0 2px 6px rgba(10,10,11,.05);
+  opacity:0;transform:translateY(-4px);transition:opacity .12s,transform .12s}
+.scrim.on .modal{opacity:1;transform:none}
+.modal h2{margin:0;font-size:18px;font-weight:500;letter-spacing:-.02em}
+.modal p{margin:12px 0 0;font-size:13px;color:var(--text-2)}
+.mrow{margin-top:24px;display:flex;gap:12px}
+.mrow input{flex:1;min-width:0;height:48px;padding:0 16px;font-family:var(--mono);
+  font-size:15px;background:#fff;border:1px solid var(--border);border-radius:10px;
+  transition:border-color .12s,box-shadow .12s}
+.mrow input:focus{outline:none;border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(0,207,200,.28)}
+.modal.bad .mrow input{border-color:var(--magenta)}
+.mrun{height:48px;min-width:88px;padding:0 20px;font-size:15px;font-weight:500;
+  color:#fff;background:var(--magenta);border:0;border-radius:10px;
+  transition:background .12s}
+.mrun:hover{background:var(--magenta-hover)}
+.mrun:disabled{opacity:.45;cursor:not-allowed}
+.merr{min-height:20px;margin:8px 0 0;font-size:13px;color:var(--magenta)}
+.mfoot{margin:20px 0 0;font-size:13px;color:var(--text-2)}
+.mfoot a{color:var(--data);text-decoration:underline;text-underline-offset:2px}
+
 /* ── 进度页 ───────────────────────────────── */
 .load{position:relative;z-index:1;display:flex;flex-direction:column;
   align-items:center;text-align:center;padding:140px 0}
@@ -251,15 +279,65 @@ inp.addEventListener('blur',()=>{
         st.className='status warn';}
     }).catch(()=>{sp.style.display='none';});
 });
+const scrim=document.getElementById('scrim'),modal=document.getElementById('modal'),
+      code=document.getElementById('code'),mrun=document.getElementById('mrun'),
+      merr=document.getElementById('merr');
+let last;
+
+function busy(on){
+  // 先钉住宽度再换文案，否则按钮会缩一下
+  if(on&&!go.style.width) go.style.width=go.offsetWidth+'px';
+  go.disabled=on; go.textContent=on?'Starting…':'Start digging';
+}
+function openModal(){
+  last=document.activeElement; scrim.hidden=false;
+  requestAnimationFrame(()=>scrim.classList.add('on'));
+  code.focus();
+}
+function closeModal(){
+  scrim.classList.remove('on');
+  setTimeout(()=>{scrim.hidden=true;},120);
+  modal.classList.remove('bad'); merr.textContent='';
+  if(last)last.focus();
+}
+// 服务端是唯一的判断者。前端只管「收到 401 就弹窗」——
+// 就算有人改烂了这段 JS 或者直接 curl，服务端照样拒绝。
+function start(c){
+  busy(true); merr.textContent=''; modal.classList.remove('bad');
+  const body={brand:inp.value.trim()}; if(c)body.code=c;
+  return fetch('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)}).then(r=>r.json().then(d=>({s:r.status,d})))
+    .then(({s,d})=>{
+      if(s===200){location.href='/job/'+d.job_id;return;}
+      busy(false);
+      if(s===401){
+        if(scrim.hidden){openModal();}
+        else{modal.classList.add('bad');
+             merr.textContent="That code isn't right."; code.focus();}
+        return;
+      }
+      merr.textContent=d.error||'Something went wrong.';
+    }).catch(()=>{busy(false);merr.textContent='Network error. Try again.';});
+}
 document.getElementById('f').addEventListener('submit',e=>{
-  e.preventDefault();
-  const v=inp.value.trim(); if(!v)return;
-  // 先钉住当前宽度再换文案，否则 'Start digging' → 'Starting…' 会让按钮缩一下
-  go.style.width=go.offsetWidth+'px';
-  go.disabled=true; go.textContent='Starting…';
-  fetch('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({brand:v})}).then(r=>r.json())
-    .then(d=>{location.href='/job/'+d.job_id;});
+  e.preventDefault(); if(inp.value.trim()) start('');
+});
+mrun.onclick=()=>{const c=code.value.trim(); if(c) start(c);};
+code.addEventListener('input',()=>{
+  mrun.disabled=!code.value.trim();
+  modal.classList.remove('bad'); merr.textContent='';
+});
+code.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){e.preventDefault(); if(code.value.trim())start(code.value.trim());}
+});
+scrim.addEventListener('mousedown',e=>{if(e.target===scrim)closeModal();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!scrim.hidden)closeModal();
+  if(e.key==='Tab'&&!scrim.hidden){
+    const f=[code,mrun,modal.querySelector('.mfoot a')].filter(Boolean);
+    if(e.shiftKey&&document.activeElement===f[0]){e.preventDefault();f[f.length-1].focus();}
+    else if(!e.shiftKey&&document.activeElement===f[f.length-1]){e.preventDefault();f[0].focus();}
+  }
 });
 """
 
@@ -280,7 +358,24 @@ def index_page(demos: list[dict]) -> str:
     demos_html = (f'<div class="demos"><p>{label}</p>'
                   f'<div class="dgrid">{"".join(dcard(d) for d in demos)}</div>'
                   f'</div>') if demos else ""
-    body = f"""{BLOOM}<div class="wrap"><header class="topbar">
+    demo_href = f'/brief/{H.escape(demos[0]["job_id"])}' if demos else "/"
+    modal = f"""<div class="scrim" id="scrim" hidden>
+  <div class="modal" id="modal" role="dialog" aria-modal="true"
+       aria-labelledby="mtitle">
+    <h2 id="mtitle">Live runs are invite-only during beta</h2>
+    <p>Each run crawls ~1,700 videos across 17 searches,
+       so access is limited for now.</p>
+    <div class="mrow">
+      <input type="text" id="code" placeholder="invite code" autocomplete="off"
+             spellcheck="false" aria-describedby="merr">
+      <button class="mrun" id="mrun" type="button" disabled>Run</button>
+    </div>
+    <p class="merr" id="merr" aria-live="polite"></p>
+    <p class="mfoot">No code? <a href="{demo_href}">See a finished report →</a></p>
+  </div>
+</div>"""
+
+    body = f"""{BLOOM}{modal}<div class="wrap"><header class="topbar">
   <a class="wordmark" href="/">Spark</a></header>
 <main class="hero">
   <h1>Skip the scroll.<br>Watch the 3% that hit.</h1>

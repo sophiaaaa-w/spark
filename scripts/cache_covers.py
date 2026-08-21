@@ -7,9 +7,13 @@
     而 demo 恰恰是大多数访客唯一会看到的页面。
 
 跑法：
-    python3 scripts/cache_covers.py           # 处理所有 demo brief
-    python3 scripts/cache_covers.py --all     # 处理全部 brief，不只 demo
-    python3 scripts/cache_covers.py --force   # 已存在的也重下
+    python3 scripts/cache_covers.py                  # 处理所有 demo brief
+    python3 scripts/cache_covers.py <job_id> [...]   # 只处理指定的
+    python3 scripts/cache_covers.py --all            # 处理全部 brief
+    python3 scripts/cache_covers.py --force          # 已存在的也重下
+
+签名约两天过期，所以刚跑完就缓存最稳。想留着以后当 demo 的，先缓存再说 ——
+过期之后只能重跑一次才能拿到新地址。
 
 只用标准库，不引新依赖。
 """
@@ -98,16 +102,24 @@ def process(path: Path, *, force: bool) -> None:
 def main() -> None:
     force = "--force" in sys.argv
     every = "--all" in sys.argv
+    wanted = [a for a in sys.argv[1:] if not a.startswith("--")]
 
     briefs = sorted((C.DATA_DIR / "briefs").glob("*.json"))
     if not briefs:
         sys.exit("data/briefs 下没有任何 brief")
 
-    if not every:
+    if wanted:
+        found = {b.stem for b in briefs}
+        missing = [w for w in wanted if w not in found]
+        if missing:
+            sys.exit(f"找不到这些 job：{', '.join(missing)}\n"
+                     f"现有：{', '.join(sorted(found))}")
+        briefs = [b for b in briefs if b.stem in wanted]
+    elif not every:
         demos = demo_job_ids()
         if not demos:
             sys.exit("还没有标记任何 demo。先跑 scripts/mark_demo.py，"
-                     "或者加 --all 处理全部。")
+                     "指定 job_id，或者加 --all 处理全部。")
         briefs = [b for b in briefs if b.stem in demos]
 
     print(f"要处理 {len(briefs)} 份 brief，封面存到 {COVERS_DIR}")

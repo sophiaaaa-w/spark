@@ -17,6 +17,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import secrets
 import shutil
 import time
 import uuid
@@ -206,6 +207,23 @@ async def api_probe(brand: str) -> JSONResponse:
     return JSONResponse({"count": n})
 
 
+def _invited(request: Request, code: str) -> bool:
+    """这次请求有没有资格花钱。
+
+    判断放在服务端，因为前端拦不住任何人 —— `/api/jobs` 这个地址就写在页面
+    代码里，谁都能直接 curl 过来，绕开弹窗、绕开 localStorage、绕开整个前端。
+    唯一有意义的位置是真正花钱的那个函数前面。
+
+    没配 INVITE_CODE 就是不设防，方便本地开发。
+    """
+    if not C.INVITE_CODE:
+        return True
+    if code and secrets.compare_digest(code, C.INVITE_CODE):
+        return True
+    cookie = request.cookies.get(C.INVITE_COOKIE, "")
+    return bool(cookie) and secrets.compare_digest(cookie, C.INVITE_CODE)
+
+
 @app.post("/api/jobs")
 async def create_job(request: Request, bg: BackgroundTasks) -> JSONResponse:
     payload = await request.json()
@@ -213,6 +231,13 @@ async def create_job(request: Request, bg: BackgroundTasks) -> JSONResponse:
     if not brand:
         raise HTTPException(400, "brand is required")
     dev = bool(payload.get("dev"))
+
+    code = (payload.get("code") or "").strip()
+    if not _invited(request, code):
+        # 401 而不是 403：前端靠这个状态码决定弹窗，也靠它区分「码错了」和
+        # 「还没输码」。一分钱不花。
+        return JSONResponse({"error": "invite required",
+                             "tried": bool(code)}, status_code=401)
 
     # 同一品牌已经在跑或在排队，就把那个 job 还回去，不再开新的。
     # MAX_CONCURRENT_JOBS=1 只保证不并行，不保证不重复 —— 排队的那个照样会跑、
@@ -234,7 +259,16 @@ async def create_job(request: Request, bg: BackgroundTasks) -> JSONResponse:
             " created_at) VALUES (?,?,?,'queued','queued',0,?)",
             (job_id, "", brand, int(time.time())))
     bg.add_task(_run, job_id, brand, dev)
-    return JSONResponse({"job_id": job_id})
+
+    resp = JSONResponse({"job_id": job_id})
+    if C.INVITE_CODE and code:
+        # 输对过一次就记住这个浏览器，之后不再弹窗。
+        # 它不认设备 —— 只是一张「这个浏览器输对过」的条子，谁输对谁都有。
+        resp.set_cookie(C.INVITE_COOKIE, C.INVITE_CODE,
+                        max_age=C.INVITE_COOKIE_MAX_AGE,
+                        httponly=True, samesite="lax",
+                        secure=request.url.scheme == "https")
+    return resp
 
 
 @app.get("/api/jobs/{job_id}")

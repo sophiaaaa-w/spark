@@ -71,6 +71,16 @@ DATE_PARAM_WORKS_ON_SEARCH = False
 # #wavytalkhair(163)、#wavytalkpartner(20) 等一堆高量标签。
 
 RECALL_PARALLEL_RUNS = 4
+# 邀请码。空值 = 不设防，任何人都能触发真实抓取（本地开发时的默认状态）。
+# 线上必须在 Railway 的环境变量里配一个，否则每个访客都在花你的钱。
+INVITE_CODE = os.getenv("SPARK_INVITE_CODE", "").strip()
+
+# 校验通过后种的 cookie，30 天。存的是码本身，服务端每次请求都重新比对 ——
+# 安全性来自「服务端每次都查」，不是来自 cookie 本身。
+# httpOnly 只是额外好处：页面 JS 读不到，不会被 XSS 偷走或从 devtools 里复制走。
+INVITE_COOKIE = "spark_invite"
+INVITE_COOKIE_MAX_AGE = 30 * 24 * 3600
+
 # 首页最多展示几张 demo 卡片。超过 3–4 个品类反而稀释说服力 ——
 # 要证明的是「不是给一个品牌写死的」，两三个不同品类就够了。
 MAX_DEMOS = 4
